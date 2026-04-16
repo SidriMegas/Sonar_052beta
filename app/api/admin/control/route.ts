@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 
 const SearchParamsSchema = z.object({
@@ -11,6 +11,274 @@ const ActionSchema = z.object({
   id: z.string().trim().min(1),
 })
 
+type AdminControlDatabase = {
+  public: {
+    Tables: {
+      digger: {
+        Row: {
+          id: string
+          username: string | null
+          email: string | null
+          role: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id: string
+          username: string
+          email?: string | null
+          role?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          username?: string | null
+          email?: string | null
+          role?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      prod: {
+        Row: {
+          id: string
+          nom_titre: string
+          nom_artiste: string
+          youtube_id: string | null
+          user_id: string
+          likes: number | null
+          points: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          nom_titre: string
+          nom_artiste: string
+          youtube_id?: string | null
+          user_id: string
+          likes?: number | null
+          points?: number | null
+          created_at?: string
+        }
+        Update: {
+          nom_titre?: string
+          nom_artiste?: string
+          youtube_id?: string | null
+          user_id?: string
+          likes?: number | null
+          points?: number | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      titre: {
+        Row: {
+          id: string
+          nom_titre: string
+          nom_artiste: string
+          youtube_id: string | null
+          user_id: string | null
+          likes: number | null
+          points: number | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          nom_titre: string
+          nom_artiste: string
+          youtube_id?: string | null
+          user_id?: string | null
+          likes?: number | null
+          points?: number | null
+          created_at?: string | null
+        }
+        Update: {
+          nom_titre?: string
+          nom_artiste?: string
+          youtube_id?: string | null
+          user_id?: string | null
+          likes?: number | null
+          points?: number | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      tlmvpsp_rounds: {
+        Row: {
+          id: string
+          king_titre_id: string
+          challenger_titre_id: string
+          winner_titre_id: string | null
+        }
+        Insert: {
+          id?: string
+          king_titre_id: string
+          challenger_titre_id: string
+          winner_titre_id?: string | null
+        }
+        Update: {
+          king_titre_id?: string
+          challenger_titre_id?: string
+          winner_titre_id?: string | null
+        }
+        Relationships: []
+      }
+      playlist_tracks: {
+        Row: {
+          id: string
+          titre_id: string
+        }
+        Insert: {
+          id?: string
+          titre_id: string
+        }
+        Update: {
+          titre_id?: string
+        }
+        Relationships: []
+      }
+      playlist_votes: {
+        Row: {
+          id: string
+          track_id: string
+        }
+        Insert: {
+          id?: string
+          track_id: string
+        }
+        Update: {
+          track_id?: string
+        }
+        Relationships: []
+      }
+      playlist_suggestions: {
+        Row: {
+          id: string
+          titre_id: string
+          accepted_track_id: string | null
+        }
+        Insert: {
+          id?: string
+          titre_id: string
+          accepted_track_id?: string | null
+        }
+        Update: {
+          titre_id?: string
+          accepted_track_id?: string | null
+        }
+        Relationships: []
+      }
+      tlmvpsp_autopromo_entries: {
+        Row: {
+          id: string
+          titre_id: string
+        }
+        Insert: {
+          id?: string
+          titre_id: string
+        }
+        Update: {
+          titre_id?: string
+        }
+        Relationships: []
+      }
+      wave_tiles_current: {
+        Row: {
+          track_id: string
+        }
+        Insert: {
+          track_id: string
+        }
+        Update: {
+          track_id?: string
+        }
+        Relationships: []
+      }
+      wave_tile_history: {
+        Row: {
+          track_id: string
+        }
+        Insert: {
+          track_id: string
+        }
+        Update: {
+          track_id?: string
+        }
+        Relationships: []
+      }
+      vote: {
+        Row: {
+          id: string
+          titre_id: string | null
+          prod_id: string | null
+        }
+        Insert: {
+          id?: string
+          titre_id?: string | null
+          prod_id?: string | null
+        }
+        Update: {
+          titre_id?: string | null
+          prod_id?: string | null
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          id: string
+          titre_id: string | null
+          prod_id: string | null
+        }
+        Insert: {
+          id?: string
+          titre_id?: string | null
+          prod_id?: string | null
+        }
+        Update: {
+          titre_id?: string | null
+          prod_id?: string | null
+        }
+        Relationships: []
+      }
+      bottles: {
+        Row: {
+          id: string
+          titre_id: string | null
+        }
+        Insert: {
+          id?: string
+          titre_id?: string | null
+        }
+        Update: {
+          titre_id?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          id: string
+          related_titre_id: string | null
+          related_prod_id: string | null
+        }
+        Insert: {
+          id?: string
+          related_titre_id?: string | null
+          related_prod_id?: string | null
+        }
+        Update: {
+          related_titre_id?: string | null
+          related_prod_id?: string | null
+        }
+        Relationships: []
+      }
+    }
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
+  }
+}
+
+type AdminControlClient = SupabaseClient<AdminControlDatabase>
+
 const getClients = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -19,8 +287,8 @@ const getClients = () => {
   if (!url || !anon || !service) return null
 
   return {
-    auth: createClient(url, anon),
-    admin: createClient(url, service),
+    auth: createClient<AdminControlDatabase>(url, anon),
+    admin: createClient<AdminControlDatabase>(url, service),
   }
 }
 
@@ -74,7 +342,7 @@ async function requireAdmin(req: NextRequest) {
   }
 }
 
-async function deleteProd(admin: ReturnType<typeof createClient>, prodId: string) {
+async function deleteProd(admin: AdminControlClient, prodId: string) {
   const cleanupOps = [
     admin.from('vote').delete().eq('prod_id', prodId),
     admin.from('feedback').delete().eq('prod_id', prodId),
@@ -91,7 +359,7 @@ async function deleteProd(admin: ReturnType<typeof createClient>, prodId: string
   if (deleteError) throw new Error(deleteError.message)
 }
 
-async function deleteTitre(admin: ReturnType<typeof createClient>, titreId: string) {
+async function deleteTitre(admin: AdminControlClient, titreId: string) {
   const { data: rounds, error: roundsError } = await admin
     .from('tlmvpsp_rounds')
     .select('id')
@@ -107,6 +375,7 @@ async function deleteTitre(admin: ReturnType<typeof createClient>, titreId: stri
     .from('playlist_tracks')
     .select('id')
     .eq('titre_id', titreId)
+    .returns<{ id: string }[]>()
 
   if (playlistTracksError) throw new Error(playlistTracksError.message)
 

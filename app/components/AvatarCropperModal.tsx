@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import Cropper, { type Area, type Point } from 'react-easy-crop'
 import 'react-easy-crop/react-easy-crop.css'
 
@@ -14,7 +14,7 @@ type AvatarCropperModalProps = {
 
 function loadImage(src: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image()
+    const image = new window.Image()
     image.onload = () => resolve(image)
     image.onerror = () => reject(new Error('Impossible de charger l image.'))
     image.src = src
@@ -193,7 +193,7 @@ export default function AvatarCropperModal({ isOpen, imageSrc, onCancel, onApply
             <div className="mt-6 flex justify-center">
               <div className="h-52 w-52 overflow-hidden rounded-full border border-cyan-300/30 bg-black shadow-[0_0_30px_rgba(34,211,238,0.12)]">
                 {previewUrl && (
-                  <Image
+                  <NextImage
                     src={previewUrl}
                     alt="Apercu avatar"
                     className="h-full w-full object-cover"
